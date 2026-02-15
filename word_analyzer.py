@@ -1,5 +1,5 @@
 from wordfreq import top_n_list, zipf_frequency
-import matplotlib as plt
+import matplotlib.pyplot as plt
 import pandas as pd
 from parser_html import ParserHTML
 import time 
@@ -11,11 +11,12 @@ class WordAnalyzer:
 
     def __init__(self, parser:ParserHTML):
         self.parser = parser
+        self.language = "en"
 
 
     def count_words(self, phrase:str, soup):
         article_text = self.parser.get_text(soup)
-
+        print(article_text[:1000])
         if not article_text:
             print("No article text found")
             return
@@ -24,8 +25,7 @@ class WordAnalyzer:
 
         global_counts = self.load_word_counts()
         global_counts = self.update_word_counts(global_counts, words)
-        global_counts = dict(sorted(global_counts.items(), key=lambda item: item[1], reverse=True))
-
+      
         self.save_word_counts(global_counts)
         print(f"Counted {len(words)} words from article '{phrase}'")
 
@@ -43,10 +43,9 @@ class WordAnalyzer:
 
         if mode == "article":
             sorted_article = sorted(article_counts.items(),key=lambda x: x[1],reverse=True)[:n]
-            #TODO remove sorted from count-words
 
             for word, count in sorted_article:
-                lang_freq = zipf_frequency(word, mode)
+                lang_freq = zipf_frequency(word, self.language) / 8
                 rows.append({
                     "word": word,
                     "frequency_art": count / max_article_freq,
@@ -54,7 +53,7 @@ class WordAnalyzer:
                 })
 
         elif mode == "language":
-            top_language_words = top_n_list(mode, n)
+            top_language_words = top_n_list(self.language, n)
 
             for word in top_language_words:
                 article_freq = article_counts.get(word)
@@ -63,7 +62,7 @@ class WordAnalyzer:
                     "frequency_art": (
                         article_freq / max_article_freq if article_freq else None
                     ),
-                    "frequency_lang": zipf_frequency(word, mode)
+                    "frequency_lang": zipf_frequency(word, self.language) / 8
                 })
 
         df = pd.DataFrame(rows)
@@ -127,29 +126,11 @@ class WordAnalyzer:
         return global_counts
     
 
-    def create_bar_chart(df, chart_path):
-        x = np.arange(len(df))
-        width = 0.35
-
-        plt.figure(figsize=(12, 6))
-        plt.bar(
-            x - width / 2,
-            df["frequency_art"],
-            width,
-            label="Article"
+    def create_bar_chart(self, df, chart_path):
+        df.set_index("word")[["frequency_art", "frequency_lang"]].plot(
+            kind="bar",
+            figsize=(12, 6)
         )
-        plt.bar(
-            x + width / 2,
-            df["frequency_lang"],
-            width,
-            label="Language"
-        )
-
-        plt.xticks(x, df["word"], rotation=45, ha="right")
-        plt.title("Relative word frequency comparison")
-        plt.legend()
         plt.tight_layout()
         plt.savefig(chart_path)
-        plt.close()
-
         print(f"Chart saved to {chart_path}")

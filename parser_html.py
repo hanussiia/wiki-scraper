@@ -25,13 +25,14 @@ class ParserHTML:
 
         return text
 
-    def extract_words(self, text):
-        return re.findall(r"[a-zA-Z]+", text.lower())
+    def extract_words(self, text: str):
+        return re.findall(r"[^\W\d_]+(?:'[^\W\d_]+)?", text.lower(), flags=re.UNICODE)
+
 
     def get_links(self, soup):
         links = []
         for link in soup.find_all("a", href=True):
-            if link["href"].startswith("/wiki/") and ":" not in link["href"]: #prefix not hardcode
+            if link["href"].startswith("/wiki/") and ":" not in link["href"]:
                 links.append(link["href"])
         return links
     

@@ -18,7 +18,7 @@ class ParserCLI:
         if self.args.analyze_relative:
             if not self.args.mode or not self.args.count:
                 self.parser.error(
-                    "--analyze-relative-word-frequency requires "
+                    "--analyze-relative requires "
                     "--mode and --count"
                 )
             if self.args.count <= 0:

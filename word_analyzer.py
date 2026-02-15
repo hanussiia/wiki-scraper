@@ -1,6 +1,6 @@
 from wordfreq import top_n_list, zipf_frequency
-import matplotlib.pyplot as plt
 import pandas as pd
+import matplotlib.pyplot as plt 
 from parser_html import ParserHTML
 import time 
 import numpy as np 
@@ -9,29 +9,28 @@ from pathlib import Path
 
 class WordAnalyzer: 
 
-    def __init__(self, parser:ParserHTML):
+    def __init__(self, parser:ParserHTML, language="en"):
         self.parser = parser
-        self.language = "en"
+        self.language = language
 
 
-    def count_words(self, phrase:str, soup):
+    def count_words(self, phrase:str, soup, prefix=None, postfix=None):
         article_text = self.parser.get_text(soup)
-        print(article_text[:1000])
         if not article_text:
             print("No article text found")
             return
 
         words = self.parser.extract_words(article_text)
 
-        global_counts = self.load_word_counts()
+        global_counts = self.load_word_counts(prefix=prefix, postfix=postfix)
         global_counts = self.update_word_counts(global_counts, words)
       
-        self.save_word_counts(global_counts)
+        self.save_word_counts(global_counts, prefix=prefix, postfix=postfix)
         print(f"Counted {len(words)} words from article '{phrase}'")
 
 
     def analyze_relative_word_frequency(self, mode, n, chart_path):
-        article_counts = self.load_word_counts()
+        article_counts = self.load_word_counts(prefix=None, postfix=None)
 
         if not article_counts:
             print("No word counts available. Run --count-words first.")
@@ -103,7 +102,12 @@ class WordAnalyzer:
             time.sleep(t)
 
 
-    def load_word_counts(self, path="word-counts.json"):
+    def load_word_counts(self, prefix: str=None, postfix:str=None):
+        if prefix and postfix:
+            path = f"{prefix}-{postfix}-word-counts.json"
+        else:
+            path = "word-counts.json"
+
         if not Path(path).exists():
             return {}
 
@@ -111,7 +115,12 @@ class WordAnalyzer:
             return json.load(f)
 
 
-    def save_word_counts(self, counts, path="word-counts.json"):
+    def save_word_counts(self, counts:int, prefix: str=None, postfix:str=None):
+        if postfix and prefix:
+            path = f"{prefix}-{postfix}-word-counts.json"
+        else:
+            path = "word-counts.json"
+            
         with open(path, "w", encoding="utf-8") as f:
             json.dump(counts, f, indent=2, ensure_ascii=False)
 

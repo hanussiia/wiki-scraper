@@ -19,11 +19,18 @@ class ParserHTML:
 
         for br in content_div.find_all("br"):
             br.replace_with(" ")
+        
+        for tag in content_div.find_all([
+            "header", "nav", "footer", "aside", "style", "script"
+        ]):
+            tag.decompose()
 
-        paragraphs = content_div.find_all("p")
-        text = " ".join(" ".join(p.get_text().split()) for p in paragraphs)
+        column_one = content_div.find("div", id="column-one")
+        if column_one:
+            column_one.decompose()
 
-        return text
+        text = content_div.get_text(separator=" ")
+        return " ".join(text.split())
 
     def extract_words(self, text: str):
         return re.findall(r"[^\W\d_]+(?:'[^\W\d_]+)?", text.lower(), flags=re.UNICODE)

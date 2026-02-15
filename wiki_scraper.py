@@ -7,7 +7,7 @@ def main():
     parser.parsing()
     url = "https://bulbapedia.bulbagarden.net/wiki/"
 
-    controller = Controller(parser.args, ParserHTML(url))
+    controller = Controller(ParserHTML(url), args=parser.args)
     controller.what_task()
     
 

@@ -26,7 +26,7 @@ class WordAnalyzer:
         global_counts = self.update_word_counts(global_counts, words)
       
         self.save_word_counts(global_counts, prefix=prefix, postfix=postfix)
-        print(f"Counted {len(words)} words from article '{phrase}'")
+        print(f"Counted {len(set(words))} unique words from article '{phrase}'")
 
 
     def analyze_relative_word_frequency(self, mode, n, chart_path):
@@ -81,6 +81,10 @@ class WordAnalyzer:
             print(current_phrase)
 
             content_div = self.parser.get_article_div_soup(current_phrase)
+            if content_div is None:
+                print(f"Could not retrieve content for phrase '{current_phrase}'")
+                return None
+            
             if depth > 1:
                 current_links = self.parser.get_links(content_div)
                 print(f"Number of links for current phrase '{current_phrase}': {len(current_links)}")
@@ -102,11 +106,8 @@ class WordAnalyzer:
             time.sleep(t)
 
 
-    def load_word_counts(self, prefix: str=None, postfix:str=None):
-        if prefix and postfix:
-            path = f"{prefix}-{postfix}-word-counts.json"
-        else:
-            path = "word-counts.json"
+    def load_word_counts(self, path=None):
+        path = path or "word-counts.json"
 
         if not Path(path).exists():
             return {}
@@ -120,7 +121,7 @@ class WordAnalyzer:
             path = f"{prefix}-{postfix}-word-counts.json"
         else:
             path = "word-counts.json"
-            
+
         with open(path, "w", encoding="utf-8") as f:
             json.dump(counts, f, indent=2, ensure_ascii=False)
 

@@ -9,10 +9,16 @@ class ReaderHTML:
 
     def _make_request(self, phrase: str):
         phrase_formatted = phrase.replace(" ", "_")
-        response = requests.get(self.url + phrase_formatted)
-        response.raise_for_status()
-        return response.text
-
+        try:
+            response = requests.get(self.url + phrase_formatted)
+            return response.text    
+        except requests.exceptions.HTTPError as http_err:
+            print(f"HTTP error occurred: {http_err}")
+            return None
+        except requests.exceptions.RequestException as req_err:
+            print(f"An error occurred while making the request: {req_err}")
+            return None
+        
     def _read_local(self, phrase: str):
         phrase_file_name = phrase.replace(" ", "_")
         path = Path(f"data/{phrase_file_name}.html")

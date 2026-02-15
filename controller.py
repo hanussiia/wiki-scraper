@@ -25,7 +25,7 @@ class Controller:
 
 
     def summary(self, phrase:str):
-        soup = self.parser.get_article_div_soup(phrase)
+        soup = self.parser.get_article(phrase)
         paragraph = soup.select_one('p').text.strip()
         print(paragraph)
     
@@ -33,7 +33,7 @@ class Controller:
         self.table_generator.run(phrase, number, first_row_is_header)
 
     def count_words(self, phrase:str, prefix=None, postfix=None):
-        soup = self.parser.get_article_div_soup(phrase)
+        soup = self.parser.get_article(phrase)
         self.word_analyzer.count_words(phrase, soup, prefix=prefix, postfix=postfix)
 
     def analyze_relative(self, mode, n, chart_path):

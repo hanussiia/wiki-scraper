@@ -1,8 +1,9 @@
 import pandas as pd
 from parser_html import ParserHTML
 
-class TableGenerator: 
-    def __init__(self, parser:ParserHTML):
+
+class TableGenerator:
+    def __init__(self, parser: ParserHTML):
         self.parser = parser
 
     def run(self, phrase: str, number: int, first_row_is_header: bool):
@@ -10,20 +11,20 @@ class TableGenerator:
         if not tables:
             print("No tables found")
             return
-        
+
         if number > len(tables):
-            print("Table number out of range, so the last possible table is used")
+            print("""Table number out of range,
+            "so the last possible table is used""")
             number = len(tables)
-        
+
         table_to_use = tables[number - 1]
         rows = table_to_use.find_all('tr')
         data = []
 
         for row in rows:
-            
             cells = row.find_all(['td', 'th'])
             row_data = [cell.get_text(strip=True) for cell in cells]
-            if row_data: 
+            if row_data:
                 data.append(row_data)
         print(data)
         df = pd.DataFrame(data)
@@ -36,10 +37,10 @@ class TableGenerator:
             df.columns = df.iloc[0]
             print(df.columns)
             df = df_without_header
-        
+
         if df is not None:
             print(df)
-        
+
         # --- zapis do pliku ---
         filename = phrase.replace(" ", "_") + ".csv"
         df.to_csv(filename, index=False)
@@ -49,9 +50,6 @@ class TableGenerator:
         print(df_counted_words)
         return df_counted_words
 
-
-    def _count_words_table(self, df:pd.DataFrame):
+    def _count_words_table(self, df: pd.DataFrame):
         counted_df = df.stack().value_counts().reset_index()
         counted_df.columns = ["value", "count"]
-        return counted_df
-    

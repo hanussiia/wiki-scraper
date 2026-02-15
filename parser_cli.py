@@ -76,14 +76,15 @@ class ParserCLI:
         )
         self.parser.add_argument(
             "--mode", type=str, choices=["article", "language"],
-            default="article", help="mode: article or language (--analyze-relative)"
+            default="article",
+            help="mode: article or language (--analyze-relative)"
         )
         self.parser.add_argument(
             "--count", type=int, default=10,
             help="number of words to analyze (--analyze-relative)"
         )
         self.parser.add_argument(
-            "--chart", type=str, default=None,
+            "--chart", type=str, default=".",
             help="path to save chart image (--analyze-relative)"
         )
         self.parser.add_argument(

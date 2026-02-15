@@ -4,3 +4,4 @@ venv/
 __pycache__/
 *.png
 .pytest_cache
+.DS_Store

@@ -47,6 +47,7 @@ class TableGenerator:
 
         df_counted_words = self._count_words_table(df_without_header)
         print(df_counted_words)
+        return df_counted_words
 
 
     def _count_words_table(self, df:pd.DataFrame):

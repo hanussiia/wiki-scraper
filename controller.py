@@ -28,9 +28,12 @@ class Controller:
         soup = self.parser.get_article(phrase)
         paragraph = soup.select_one('p').text.strip()
         print(paragraph)
+        return paragraph
     
     def table(self, phrase:str, number:int, first_row_is_header:bool):
-        self.table_generator.run(phrase, number, first_row_is_header)
+        table = self.table_generator.run(phrase, number, first_row_is_header)
+        return table
+        
 
     def count_words(self, phrase:str, prefix=None, postfix=None):
         soup = self.parser.get_article(phrase)

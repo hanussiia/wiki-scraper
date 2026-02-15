@@ -106,8 +106,11 @@ class WordAnalyzer:
             time.sleep(t)
 
 
-    def load_word_counts(self, path=None):
-        path = path or "word-counts.json"
+    def load_word_counts(self, path=None, prefix=None, postfix=None):
+        if prefix and postfix:
+            path = f"{prefix}-{postfix}-word-counts.json"
+        else:
+            path = "word-counts.json"
 
         if not Path(path).exists():
             return {}

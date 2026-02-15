@@ -81,7 +81,7 @@ class WordAnalyzer:
             print(f"Depth: {depth}")
             print(current_phrase)
 
-            content_div = self.parser.get_article_div_soup(current_phrase)
+            content_div = self.parser.get_article(current_phrase)
             if content_div is None:
                 print(f"""Could not retrieve content
                     for phrase '{current_phrase}'""")
